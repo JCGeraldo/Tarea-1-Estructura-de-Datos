@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct Paciente{
     char nombre[50];
@@ -11,6 +12,15 @@ typedef struct Paciente{
     char hora[9];    
 }Paciente;
 
+
+void aMayus(char nombre[50]){
+    for(int i = 0; nombre[i]!= '\0'; i++)
+        nombre[i] = toupper(nombre[i]);
+}
+
+int lower_than(void* data1,void* data2){
+    
+}
 
 // Función para limpiar la pantalla
 void limpiarPantalla() { system("clear"); }
@@ -39,15 +49,15 @@ void mostrarMenuPrincipal() {
 void registrar_paciente(List *pacientes) {
     printf("Registrar nuevo paciente\n");
     Paciente *paciente = (Paciente *)malloc(sizeof(Paciente));
-    
     printf("Ingrese el nombre del paciente: ");
-    scanf(" %[^\n]", paciente->nombre);
+    scanf(" %[^\n]s", paciente->nombre);
+    aMayus(paciente->nombre);
     printf("Ingrese la edad del paciente: ");
     scanf("%d", &paciente->edad);
     printf("Ingrese los síntomas del paciente: ");
-    scanf(" %[^\n]", paciente->sintomas);
+    scanf(" %[^\n]s", paciente->sintomas);
     printf("Ingrese la hora de llegada del paciente (HH:MM): ");
-    scanf(" %[^\n]", paciente->hora);
+    scanf(" %[^\n]s", paciente->hora);
     paciente->prioridad = 1; // Prioridad inicial es 1
     list_pushBack(pacientes, paciente);
     printf("Paciente registrado con éxito.\n");
@@ -77,7 +87,7 @@ void asignarPrioridad(List *listaOrigen,List *listaDestino,char nombre[50],int n
     while(aux){
         if(strcmp(aux->nombre,nombre)==0){
             aux->prioridad = nuevaPrioridad;
-            list_pushBack(listaDestino, aux);
+            list_sortedInsert(listaDestino, aux);
             list_popCurrent(listaOrigen);
             if(!mostrarPaciente(listaDestino, nombre))
                 printf("Error: vuelva a registrar al paciente\n");
@@ -118,6 +128,7 @@ int main() {
         int nuevaPrioridad;
         printf("Ingrese nombre del paciente:");
         scanf(" %[^\n]",nombre);
+        aMayus(nombre);
         if(!mostrarPaciente(pacientes,nombre))
             break;
         printf("Ingrese nueva prioridad (2 - 3):");
@@ -129,6 +140,7 @@ int main() {
         break;
     case '3':
       mostrar_lista_pacientes(pacientes);
+        
       break;
     case '4':
       // Lógica para atender al siguiente paciente
