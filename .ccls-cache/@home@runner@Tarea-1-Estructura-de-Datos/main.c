@@ -5,17 +5,18 @@
 #include <ctype.h>
 #include <time.h>
 
+
+
 typedef struct Paciente{
-    char nombre[50];
+    char nombre[30];
     int edad;
-    char sintomas[100];
+    char sintomas[60];
     int prioridad;
     time_t hora;   
 }Paciente;
 
-
 //Función para transformar a mayúsculas
-void aMayus(char nombre[50]){
+void aMayus(char nombre[30]){
     for(int i = 0; nombre[i]!= '\0'; i++)
         nombre[i] = toupper(nombre[i]);
 }
@@ -57,7 +58,7 @@ void registrar_paciente(List *pacientes) {
     Paciente *paciente = (Paciente *)malloc(sizeof(Paciente));
     printf("Ingrese el nombre del paciente: ");
     scanf(" %[^\n]s", paciente->nombre);
-    aMayus(paciente->nombre);
+    aMayus(paciente->nombre); //Todos los nombres se guardan en mayúsculas
     printf("Ingrese la edad del paciente: ");
     scanf("%d", &paciente->edad);
     printf("Ingrese los síntomas del paciente: ");
@@ -74,7 +75,7 @@ void registrar_paciente(List *pacientes) {
 //La funcion retorna 0 si no existe el paciente y 1 si es que existe
 int mostrarPaciente(List *paciente,char nombre[50]){
     Paciente *paciente_actual = (Paciente *)list_first(paciente);
-    while (paciente_actual){
+    do{
         if(paciente_actual == NULL){
             printf("Paciente no encontrado\n");
             return 0;
@@ -92,7 +93,7 @@ int mostrarPaciente(List *paciente,char nombre[50]){
         }
         paciente_actual = (Paciente *)list_next(paciente);
         
-    }
+    }while (paciente_actual);
 }
 
 
@@ -103,7 +104,7 @@ void asignarPrioridad(List *listaOrigen,List *listaDestino,char nombre[50],int n
     while(aux){
         if(strcmp(aux->nombre,nombre)==0){
             aux->prioridad = nuevaPrioridad;
-            list_sortedInsert(listaDestino, aux, lower_than);
+            list_sortedInsert(listaDestino, aux, lower_than);//Se guarda el paciente siguiendo el orden de llegada
             list_popCurrent(listaOrigen);
             if(!mostrarPaciente(listaDestino, nombre))
                 printf("Error: vuelva a registrar al paciente\n");
@@ -120,45 +121,12 @@ void mostrarLista(List* lista){
     while(actual){
         char hora_str[10];
         strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&actual->hora));
-        printf("|%24s|%4d|%13d|%8s|\n", actual->nombre,actual->edad,actual->prioridad,hora_str);
+        printf("|%35s|%4d|%13d|%8s|\n", actual->nombre,actual->edad,actual->prioridad,hora_str);
         actual = list_next(lista);
     }
 }
 
-
-/*void mostrar_lista_pacientes(List *pacientes, List *pacientesMedia, List *pacientesAlta){
-    // Mostrar pacientes en la cola de espera
-    printf("Pacientes en espera: \n");
-    printf("|                  Nombre|Edad|    Prioridad|    Hora|\n");
-    
-    Paciente * paciente_actual = list_first(pacientesAlta);
-    while(paciente_actual){
-        char hora_str[10];
-        strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&paciente_actual->hora));
-        
-        printf("|%24s|%4d|%13d|%8s|\n", paciente_actual->nombre,paciente_actual->edad,paciente_actual->prioridad,hora_str);
-        paciente_actual = list_next(pacientesAlta);
-    }
-    
-    paciente_actual = list_first(pacientesMedia);
-    while(paciente_actual){
-        char hora_str[10];
-        strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&paciente_actual->hora));
-
-        printf("|%24s|%4d|%13d|%8s|\n", paciente_actual->nombre,paciente_actual->edad,paciente_actual->prioridad,hora_str);
-        paciente_actual = list_next(pacientesMedia);
-    }
-   
-    paciente_actual = list_first(pacientes);
-    while(paciente_actual){
-        char hora_str[10];
-        strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&paciente_actual->hora));
-
-        printf("|%24s|%4d|%13d|%8s|\n", paciente_actual->nombre,paciente_actual->edad,paciente_actual->prioridad,hora_str);
-        paciente_actual = list_next(pacientes);
-    }
-}
-*/
+//Esta funcion muestra los datos del paciente que va a ser atendido
 void atenderSiguiente(Paciente* paciente){
     printf("Atendiendo a: %20s\n", paciente -> nombre);
     printf("Edad del paciente: %15d\n", paciente -> edad);
@@ -168,9 +136,6 @@ void atenderSiguiente(Paciente* paciente){
     strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&paciente->hora));
     printf("Hora de llegada: %17s\n", hora_str);
 }
-
-
-
 
 int main() {
     char opcion;
@@ -188,15 +153,17 @@ int main() {
         registrar_paciente(pacientes);
         break;
     case '2':
-        // Lógica para asignar prioridad
+        //Se solicita nombre y prioridad actual para encontrar al paciente
         char nombre[50];
         int prioridadActual;
         int nuevaPrioridad;
         printf("Ingrese nombre del paciente:");
         scanf(" %[^\n]s",nombre);
-        aMayus(nombre);
+        aMayus(nombre); 
         printf("Ingrese la prioridad actual (1 - 3): ");
         scanf("%d",&prioridadActual);
+
+        //Se busca al paciente y se muestran sus datos de ser encontrados
         if(prioridadActual == 1 && !mostrarPaciente(pacientes,nombre))
             break;
         else if(prioridadActual == 2 && !mostrarPaciente(prioridadMedia,nombre))
@@ -207,6 +174,7 @@ int main() {
             printf("Prioridad Inválida");
             break;
         }
+        //Se solicita nueva prioridad y se realiza el cambio
         printf("Ingrese nueva prioridad (1 - 3): ");
         scanf(" %d",&nuevaPrioridad);
         if(prioridadActual == nuevaPrioridad || nuevaPrioridad!=1&&nuevaPrioridad!=2&&nuevaPrioridad!=3)
@@ -224,11 +192,14 @@ int main() {
         break;
         
     case '3':
+        //Se comprueba si hay pacientes en espera
         if(!list_first(prioridadAlta) && !list_first(prioridadMedia)&& !list_first(pacientes)){
             printf("No hay pacientes en espera.\n");
             break;
         }
-        printf("|                  Nombre|Edad|    Prioridad|    Hora|\n");
+        //De haber pacientes, se muestran los datos de cada uno, ordenados por prioridad y 
+        //por orden de llegada
+        printf("|                             Nombre|Edad|    Prioridad|    Hora|\n");
         if(list_first(prioridadAlta))
             mostrarLista(prioridadAlta); 
         if(list_first(prioridadMedia))
@@ -238,6 +209,10 @@ int main() {
         break;
         
     case '4':
+        //Empezando por la prioridad más alta, se comprueba si existen pacientes.
+        //Si no existen pacientes se pasa a la siguiente prioridad.
+        //Si existen pacientes se muestra el primero de la lista y se eliminan sus datos
+        //Si ninguna lista tiene pacientes, se muestra un aviso
         Paciente* next = list_first(prioridadAlta);
         if(!next){
             next = list_first(prioridadMedia);
@@ -264,6 +239,9 @@ int main() {
         break;
         
     case '5':
+        /*Se solicita una prioridad (1 - 3) y se comprueba si la lista correspondiente tiene pacientes
+        si los tiene se muestra toda la lista
+        si no, se muestra un aviso*/
         int prioridad;
         printf("Ingrese prioridad (1 - 3): ");
         scanf("%d", &prioridad);
@@ -278,7 +256,7 @@ int main() {
                     break;
                 }
                 printf("Mostrando lista de prioridad baja...\n");
-                printf("|                  Nombre|Edad|    Prioridad|    Hora|\n");
+                printf("|                             Nombre|Edad|    Prioridad|    Hora|\n");
                 mostrarLista(pacientes);
                 }
             else if(prioridad == 2){
@@ -287,7 +265,7 @@ int main() {
                     break;
                 }
                 printf("Mostrando lista de prioridad media...\n");
-                printf("|                  Nombre|Edad|    Prioridad|    Hora|\n");
+                printf("|                             Nombre|Edad|    Prioridad|    Hora|\n");
                 mostrarLista(prioridadMedia);
             }
             else{
@@ -296,7 +274,7 @@ int main() {
                     break;
                 }
                 printf("Mostrando lista de prioridad alta...\n");
-                printf("|                  Nombre|Edad|    Prioridad|    Hora|\n");
+                printf("|                             Nombre|Edad|    Prioridad|    Hora|\n");
                 mostrarLista(prioridadAlta);
             }
         }
@@ -310,7 +288,8 @@ int main() {
     presioneTeclaParaContinuar();
     
     } while (opcion != '6');
-    
+
+    //Se libera la memoria de las tres listas
     list_clean(pacientes);
     list_clean(prioridadMedia);
     list_clean(prioridadAlta);
