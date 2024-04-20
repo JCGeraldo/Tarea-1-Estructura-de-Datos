@@ -9,12 +9,12 @@ El programa almacena la información de los pacientes, incluyendo su nombre, eda
 ---
 Para probar este código siga estos pasos:
 * Importe el repositorio desde su cuenta en repl.it
-* Presione el botón **RUN** para ejecutar el código
+* Presione el botón **RUN** para ejecutar el código.
 * Si esto no funciona, vaya a la terminal shell y compile el código con el siguiente comando:
   ```
   gcc tdas/*.c main.c -Wno-unused-result -o main
   ```
-* Luego utilice el comando `./main`
+* Luego utilice el comando `./main` y debería ver de inmediato el menú principal.
 * Ahora está todo listo para empezar a probar el programa.
 
 **Utilizando el programa**
