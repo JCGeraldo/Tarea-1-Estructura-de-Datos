@@ -32,7 +32,7 @@ Al ejecutar el programa usted verá un menú como el siguiente:
 6) Salir
 Ingrese su opción: 
 ```
-Usted debe ingresar un número entre 1 y 6 para elegir una funcionalidad del programa. Cada vez que elija una opción que no sea 6, el programa volverá automaticamente a este menú, luego de terminar con la opción elegida.
+Usted debe ingresar un número entre 1 y 6 para elegir una funcionalidad del programa. Cada vez que elija una opción que no sea 6, el programa ejecutará la opción elegida y volverá automáticamente al menú principal al terminar.
 
 **Ejemplo de Uso**
 -
