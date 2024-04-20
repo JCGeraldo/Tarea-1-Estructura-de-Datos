@@ -5,8 +5,6 @@
 #include <ctype.h>
 #include <time.h>
 
-
-
 typedef struct Paciente{
     char nombre[30];
     int edad;
@@ -21,6 +19,8 @@ void aMayus(char nombre[30]){
         nombre[i] = toupper(nombre[i]);
 }
 
+//Esta funcion compara las horas de ingreso
+//Se utiliza para insertar ordenado con la funcion list_sortedInsert
 int lower_than(void* data1,void* data2){
     Paciente *paciente1 = (Paciente*) data1;
     Paciente *paciente2 = (Paciente*) data2;
@@ -60,20 +60,29 @@ void registrar_paciente(List *pacientes) {
     scanf(" %[^\n]s", paciente->nombre);
     aMayus(paciente->nombre); //Todos los nombres se guardan en mayúsculas
     printf("Ingrese la edad del paciente: ");
-    scanf("%d", &paciente->edad);
+
+    //Al leer la edad se comprueba si el usuario ingresó un número.
+    //Si no lo hizo se cancela el registro y se vuelve al menú principal
+    if(!scanf("%d", &paciente->edad ) ||paciente->edad <0|| paciente->edad > 1000){
+        printf("Edad no válida. Volviendo al menu principal...\n");
+        char c;
+        while ((c = getchar()) != '\n') {}
+        free(paciente);
+        return;
+    }
     printf("Ingrese los síntomas del paciente: ");
     scanf(" %[^\n]s", paciente->sintomas);
     paciente->prioridad = 1; // Prioridad inicial es 1
     
-    time(&paciente->hora);
+    time(&paciente->hora);//Se guarda la hora en el momento del registro
     
-    list_pushBack(pacientes, paciente);
+    list_pushBack(pacientes, paciente);//Se almacenan los datos del paciente en la lista de prioridad baja
     printf("Paciente registrado con éxito.\n");
 }
 
 //Esta funcion busca y muestra un paciente en una lista dada
 //La funcion retorna 0 si no existe el paciente y 1 si es que existe
-int mostrarPaciente(List *paciente,char nombre[50]){
+int mostrarPaciente(List *paciente,char nombre[30]){
     Paciente *paciente_actual = (Paciente *)list_first(paciente);
     do{
         if(paciente_actual == NULL){
@@ -99,13 +108,15 @@ int mostrarPaciente(List *paciente,char nombre[50]){
 
 //Esta funcion traslada un paciente desde listaOrigen a listaDestino, actualizando su prioridad
 //El paciente se inserta de forma ordenada a la listaDestino y se elimina de listaOrigen
-void asignarPrioridad(List *listaOrigen,List *listaDestino,char nombre[50],int nuevaPrioridad){
+void asignarPrioridad(List *listaOrigen,List *listaDestino,char nombre[30],int nuevaPrioridad){
     Paciente *aux = list_first(listaOrigen);
     while(aux){
         if(strcmp(aux->nombre,nombre)==0){
             aux->prioridad = nuevaPrioridad;
             list_sortedInsert(listaDestino, aux, lower_than);//Se guarda el paciente siguiendo el orden de llegada
-            list_popCurrent(listaOrigen);
+            list_popCurrent(listaOrigen);//Se elimina de la lista original
+
+            //Se vuelve a mostrar el paciente con sus datos actualizados
             if(!mostrarPaciente(listaDestino, nombre))
                 printf("Error: vuelva a registrar al paciente\n");
             else
@@ -119,8 +130,10 @@ void asignarPrioridad(List *listaOrigen,List *listaDestino,char nombre[50],int n
 void mostrarLista(List* lista){
     Paciente* actual = list_first(lista);
     while(actual){
+        //Transformamos hora a str e imprimimos formateado
         char hora_str[10];
         strftime(hora_str, sizeof(hora_str), "%H:%M:%S",localtime(&actual->hora));
+        
         printf("|%35s|%4d|%13d|%8s|\n", actual->nombre,actual->edad,actual->prioridad,hora_str);
         actual = list_next(lista);
     }
@@ -161,24 +174,30 @@ int main() {
         scanf(" %[^\n]s",nombre);
         aMayus(nombre); 
         printf("Ingrese la prioridad actual (1 - 3): ");
-        scanf("%d",&prioridadActual);
-
         //Se busca al paciente y se muestran sus datos de ser encontrados
-        if(prioridadActual == 1 && !mostrarPaciente(pacientes,nombre))
+        if(!scanf("%d",&prioridadActual) ||( prioridadActual!= 1 && prioridadActual!=2&&prioridadActual!=3)){
+            printf("Prioridad no válida. Volviendo al menú principal...\n");
+            char c;
+            while(c = getchar()!='\n'){}
+            break;
+        }
+        
+        else if(prioridadActual == 1 && !mostrarPaciente(pacientes,nombre))
             break;
         else if(prioridadActual == 2 && !mostrarPaciente(prioridadMedia,nombre))
             break; 
         else if(prioridadActual == 3 && !mostrarPaciente(prioridadAlta,nombre))
             break;
-        else if(prioridadActual!=1&&prioridadActual!=2&&prioridadActual!=3){
-            printf("Prioridad Inválida");
-            break;
-        }
+        
         //Se solicita nueva prioridad y se realiza el cambio
         printf("Ingrese nueva prioridad (1 - 3): ");
-        scanf(" %d",&nuevaPrioridad);
-        if(prioridadActual == nuevaPrioridad || nuevaPrioridad!=1&&nuevaPrioridad!=2&&nuevaPrioridad!=3)
-            printf("Prioridad Inválida.\n");
+        if(!scanf("%d",&nuevaPrioridad)|| prioridadActual == nuevaPrioridad ||( nuevaPrioridad!= 1 && nuevaPrioridad!=2&&nuevaPrioridad!=3)){
+            printf("Prioridad no válida. Volviendo al menú principal...\n");
+            char c;
+            while(c = getchar()!='\n'){}
+            break;
+        }
+        
         else if(prioridadActual==1)
                 nuevaPrioridad == 2?asignarPrioridad(pacientes,prioridadMedia,nombre,nuevaPrioridad):
                     asignarPrioridad(pacientes,prioridadAlta,nombre,nuevaPrioridad);
@@ -209,10 +228,10 @@ int main() {
         break;
         
     case '4':
-        //Empezando por la prioridad más alta, se comprueba si existen pacientes.
-        //Si no existen pacientes se pasa a la siguiente prioridad.
-        //Si existen pacientes se muestra el primero de la lista y se eliminan sus datos
-        //Si ninguna lista tiene pacientes, se muestra un aviso
+        /*Empezando por la prioridad más alta, se comprueba si existen pacientes.
+        Si no existen pacientes se pasa a la siguiente prioridad.
+        Si existen pacientes se muestra el primero de la lista y se eliminan sus datos
+        Si ninguna lista tiene pacientes, se muestra un aviso*/
         Paciente* next = list_first(prioridadAlta);
         if(!next){
             next = list_first(prioridadMedia);
@@ -244,9 +263,11 @@ int main() {
         si no, se muestra un aviso*/
         int prioridad;
         printf("Ingrese prioridad (1 - 3): ");
-        scanf("%d", &prioridad);
-        if(prioridad != 1 && prioridad != 2 && prioridad != 3){
-            printf("Prioridad inválida\n");
+        
+        if(!scanf("%d", &prioridad) ||(prioridad != 1 && prioridad != 2 && prioridad != 3)){
+            printf("Prioridad no válida.Volviendo al menú principal\n");
+            char c;
+            while(c = getchar()!='\n'){}
             break;
         }
         else{
