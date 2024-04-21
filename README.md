@@ -153,6 +153,7 @@ Cualquier otra prioridad ingresada se considera inválida y provoca que el siste
 
 ## A Mejorar
 * Permitir al usuario editar datos de los pacientes, o eliminar pacientes de las listas de espera.
+* Incluir un identificador específico por persona.
 * Mejorar la interacción con el usuario.
 * Permitir guardar los datos de los pacientes antes de salir del sistema.
   

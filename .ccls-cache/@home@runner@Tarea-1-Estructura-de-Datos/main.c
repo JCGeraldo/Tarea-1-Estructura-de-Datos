@@ -19,6 +19,7 @@ void aMayus(char nombre[60]){
         nombre[i] = toupper(nombre[i]);
 }
 
+//Función para limpiar caracteres residuales.
 void limpiarBuffer(){
     while(getchar() != '\n');
     return;
@@ -184,15 +185,16 @@ int main() {
     
     do {
     mostrarMenuPrincipal();
-    limpiarBuffer();
     printf("Ingrese su opción: ");
     scanf(" %c", &opcion);
     limpiarBuffer();
     switch (opcion) {
     case '1':
+        //Opción para registrar nuevos pacientes, pide nombre, edad y síntomas
         registrar_paciente(pacientes);
         break;
     case '2':
+        //Opción para cambiar prioridad a los pacientes, pide nombre y nueva prioridad
         limpiarPantalla();
         
         //Se solicita nombre para encontrar al paciente
@@ -203,6 +205,7 @@ int main() {
         //Se valida que el nombre no esté vacío
         if (strlen(nombre) == 0){
             printf("Nombre no válido. Volviendo al menú principal...\n");
+            limpiarBuffer();
             break;
         }
         aMayus(nombre);
@@ -211,6 +214,7 @@ int main() {
         //Se comprueba que se haya ingresado una prioridad válida
         if(!scanf(" %d", &nuevaPrioridad) ||(nuevaPrioridad < 1) || (nuevaPrioridad > 3)){
             printf("Prioridad no válida. Volviendo al menú principal...\n");
+            limpiarBuffer();
             break;
         }
         limpiarBuffer();
@@ -218,6 +222,8 @@ int main() {
         break;
         
     case '3':
+        //Opción para mostrar la lista de espera por completo.
+        
         limpiarPantalla();
         //Se comprueba si hay pacientes en espera
         if(!list_first(prioridadAlta) && !list_first(prioridadMedia)&& !list_first(pacientes)){
@@ -236,6 +242,8 @@ int main() {
         break;
         
     case '4':
+        //Opción para atender al siguiente paciente, respetando orden de prioridad y hora de llegada
+        
         limpiarPantalla();
         /*Empezando por la prioridad más alta, se comprueba si existen pacientes.
         Si no existen pacientes se pasa a la siguiente prioridad.
@@ -267,6 +275,7 @@ int main() {
         break;
         
     case '5':
+        //Opción para mostrar la lista de una prioridad específica, se solicita la prioridad.
         limpiarPantalla();
         
         /*Se solicita una prioridad (1 - 3) y se comprueba si la lista correspondiente tiene pacientes
@@ -310,8 +319,9 @@ int main() {
         }
         break;
     case '6':
-      puts("Saliendo del sistema de gestión hospitalaria...");
-      break;
+        //Opción para finalizar la ejecución del programa.
+        puts("Saliendo del sistema de gestión hospitalaria...");
+        break;
     default:
       puts("Opción no válida. Por favor, intente de nuevo.");
     }
