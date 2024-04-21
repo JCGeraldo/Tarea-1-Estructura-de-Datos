@@ -52,30 +52,22 @@ Paciente registrado con éxito.
 
 <details>
 <summary> Opción 2 - Asignar prioridad a paciente:</summary>
-Esta opción permite cambiar la prioridad de un paciente ya registrado. Se solicita el nombre del paciente, su prioridad actual y su nueva prioridad. Finalmente se mostrarán los nuevos datos del paciente.
+Esta opción permite cambiar la prioridad de un paciente ya registrado. Se solicita el nombre del paciente y su nueva prioridad. Se mostrarán los nuevos datos del paciente.
 
   ```
 Ingrese su opción: 2
-Ingrese nombre del paciente:juan
-Ingrese la prioridad actual (1 - 3): 1
-Nombre: JUAN
-Edad: 24
-Síntomas: fiebre
-Hora: 02:49:18
-Prioridad: 1
-```
-> Datos actuales del paciente.
+Ingrese nombre del paciente: juan geraldo
+Ingrese nueva prioridad: 2
 
-```
-Ingrese nueva prioridad (1 - 3): 2
-Nombre: JUAN
-Edad: 24
-Síntomas: fiebre
-Hora: 02:49:18
+Prioridad actualizada con éxito. Mostrando datos actualizados...
+
+Nombre:    JUAN GERALDO
+Edad:      24
+Síntomas:  fiebre
+Hora:      22:02:50
 Prioridad: 2
-Prioridad actualizada con éxito.
 ```
-> Datos actualizados.
+
 </details>
 
  <details>
@@ -140,11 +132,11 @@ Cualquier otra prioridad ingresada se considera inválida y provoca que el siste
 
 
 ## Problemas Conocidos
-> [!CAUTION]
->  El sistema no permite guardar los datos trabajados antes de salir del sistema, por lo que todo trabajo se debe realizar durante una única sesión.
 
+* El sistema no permite guardar los datos trabajados antes de salir del sistema, por lo que todo trabajo se debe realizar durante una única sesión.
+* El sistema no tiene un filtro para evitar datos repetidos, por lo que el usuario podría ingresar al mismo paciente más de una vez.
 * Al ingresar caracteres especiales, la función mostrar lista de espera, mostrara una lista descuadrada. Esto no afecta a la funcionalidad del programa.
-* Entradas inesperadas (letras en la edad, números negativos) provocan que el programa muestre un aviso y vuelva al menú principal.
+* Entradas inesperadas (letras en la edad, números negativos, nombres vacíos) provocan que el programa muestre un aviso y vuelva al menú principal.
 
 <details>
 <summary>Tabla descuadrada</summary>

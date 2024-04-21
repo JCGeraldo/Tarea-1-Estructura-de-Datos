@@ -19,6 +19,11 @@ void aMayus(char nombre[60]){
         nombre[i] = toupper(nombre[i]);
 }
 
+void limpiarBuffer(){
+    while(getchar() != '\n');
+    return;
+}
+
 //Esta funcion compara las horas de ingreso
 //Se utiliza para insertar ordenado con la funcion list_sortedInsert
 int lower_than(void* data1,void* data2){
@@ -61,21 +66,27 @@ void registrar_paciente(List *pacientes) {
     Paciente *paciente = (Paciente *)malloc(sizeof(Paciente));
     
     printf("Ingrese el nombre del paciente: ");
-    scanf(" %[^\n]s", paciente->nombre);
+    scanf(" %59[^\n]s", paciente->nombre);
+    //Se valida que el nombre no esté vacío
+    if (strlen(paciente->nombre) == 0){
+        printf("Nombre no válido. Volviendo al menú principal...\n");
+        return;
+    }
     aMayus(paciente->nombre); //Todos los nombres se guardan en mayúsculas
+    limpiarBuffer();
+    
     printf("Ingrese la edad del paciente: ");
-
     //Al leer la edad se comprueba si el usuario ingresó un número.
     //Si no lo hizo se cancela el registro y se vuelve al menú principal
     if(!scanf("%d", &paciente->edad ) ||paciente->edad <0|| paciente->edad > 1000){
         printf("Edad no válida. Volviendo al menu principal...\n");
-        char c;
-        while ((c = getchar()) != '\n') {}
+        limpiarBuffer();
         free(paciente);
         return;
     }
     printf("Ingrese los síntomas del paciente: ");
-    scanf(" %[^\n]s", paciente->sintomas);
+    scanf(" %59[^\n]s", paciente->sintomas);
+    limpiarBuffer();
     paciente->prioridad = 1; // Prioridad inicial es 1
     
     time(&paciente->hora);//Se guarda la hora en el momento del registro
@@ -173,25 +184,36 @@ int main() {
     
     do {
     mostrarMenuPrincipal();
+    limpiarBuffer();
     printf("Ingrese su opción: ");
     scanf(" %c", &opcion);
-    
+    limpiarBuffer();
     switch (opcion) {
     case '1':
         registrar_paciente(pacientes);
         break;
     case '2':
         limpiarPantalla();
-        //Se solicita nombre y prioridad actual para encontrar al paciente
+        
+        //Se solicita nombre para encontrar al paciente
         char nombre[60];
         int nuevaPrioridad;
         printf("Ingrese nombre del paciente: ");
-        scanf(" %[^\n]s",nombre);
-        aMayus(nombre); 
+        scanf(" %59[^\n]s",nombre);
+        //Se valida que el nombre no esté vacío
+        if (strlen(nombre) == 0){
+            printf("Nombre no válido. Volviendo al menú principal...\n");
+            break;
+        }
+        aMayus(nombre);
+        limpiarBuffer();
         printf("Ingrese nueva prioridad: ");
-        scanf(" %d", &nuevaPrioridad);
-        
-        
+        //Se comprueba que se haya ingresado una prioridad válida
+        if(!scanf(" %d", &nuevaPrioridad) ||(nuevaPrioridad < 1) || (nuevaPrioridad > 3)){
+            printf("Prioridad no válida. Volviendo al menú principal...\n");
+            break;
+        }
+        limpiarBuffer();
         asignarPrioridad(pacientes, prioridadMedia, prioridadAlta, nombre, nuevaPrioridad);
         break;
         
@@ -246,6 +268,7 @@ int main() {
         
     case '5':
         limpiarPantalla();
+        
         /*Se solicita una prioridad (1 - 3) y se comprueba si la lista correspondiente tiene pacientes
         si los tiene se muestra toda la lista
         si no, se muestra un aviso*/
@@ -254,8 +277,6 @@ int main() {
         
         if(!scanf("%d", &prioridad) ||(prioridad != 1 && prioridad != 2 && prioridad != 3)){
             printf("Prioridad no válida.Volviendo al menú principal\n");
-            char c;
-            while(c = getchar()!='\n'){}
             break;
         }
         else{
