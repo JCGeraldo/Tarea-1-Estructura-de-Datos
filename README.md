@@ -134,6 +134,7 @@ Cualquier otra prioridad ingresada se considera inválida y provoca que el siste
 ## Problemas Conocidos
 
 * El sistema no permite guardar los datos trabajados antes de salir del sistema, por lo que todo trabajo se debe realizar durante una única sesión.
+* Por ahora solo se permiten 59 caracteres de síntomas.
 * El sistema no tiene un filtro para evitar datos repetidos, por lo que el usuario podría ingresar al mismo paciente más de una vez.
 * Al ingresar caracteres especiales, la función mostrar lista de espera, mostrara una lista descuadrada. Esto no afecta a la funcionalidad del programa.
 * Entradas inesperadas (letras en la edad, números negativos, nombres vacíos) provocan que el programa muestre un aviso y vuelva al menú principal.
